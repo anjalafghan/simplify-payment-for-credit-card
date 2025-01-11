@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 use components::Navbar;
 use views::{Blog, CreditCard, Home};
-
+mod backend;
 mod components;
 mod views;
 
