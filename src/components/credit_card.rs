@@ -6,7 +6,7 @@ pub fn CreditCard() -> Element {
         div {
             id: "credit-card",
             h1 { "Credit Card" }
-            p { "This is the credit card page." }
+            p { "This is the credit card page. component" }
         }
     }
 }
