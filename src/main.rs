@@ -1,7 +1,7 @@
-use dioxus::prelude::*;
-
 use components::Navbar;
-use views::{Blog, CreditCard, Home};
+use dioxus::prelude::*;
+use tracing_subscriber;
+use views::{Blog, CreateCardView, Home};
 mod backend;
 mod components;
 mod views;
@@ -14,8 +14,8 @@ enum Route {
     Home {},
     #[route("/blog/:id")]
     Blog { id: i32 },
-    #[route("/credit-card")]
-    CreditCard {},
+    #[route("/create-card")]
+    CreateCardView {},
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
@@ -23,6 +23,8 @@ const MAIN_CSS: Asset = asset!("/assets/styling/main.css");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
 fn main() {
+    tracing_subscriber::fmt::init();
+
     dioxus::launch(App);
 }
 

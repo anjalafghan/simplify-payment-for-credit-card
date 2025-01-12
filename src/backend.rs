@@ -4,16 +4,16 @@ use dioxus::prelude::*;
 thread_local! {
     pub static DB: rusqlite::Connection = {
 
-        let conn = rusqlite::Connection::open("hotdog.db").unwrap_or_else(|err| {
+        let conn = rusqlite::Connection::open("credit_cards.db").unwrap_or_else(|err| {
             eprintln!("Failed to open database: {}", err);
             panic!("Database initialization failed");
         });
 
         conn.execute_batch(
             r#"
-            CREATE TABLE IF NOT EXISTS dogs (
+            CREATE TABLE IF NOT EXISTS cards (
                 id INTEGER PRIMARY KEY,
-                url TEXT NOT NULL
+                card_name TEXT NOT NULL
             );
             "#,
         ).unwrap_or_else(|err| {
@@ -21,6 +21,19 @@ thread_local! {
             panic!("Table creation failed");
         });
 
+        conn.execute_batch(
+            r#"
+            CREATE TABLE IF NOT EXISTS transactions(
+                id INTEGER PRIMARY KEY,
+                card_id INTEGER NOT NULL,
+                amount FLOAT NOT NULL,
+                FOREIGN KEY (card_id) REFERENCES cards(id)
+            );
+            "#,
+        ).unwrap_or_else(|err| {
+            eprintln!("Failed to create table: {}", err);
+            panic!("Table creation failed");
+        });
         conn
     };
 }
@@ -67,4 +80,28 @@ pub async fn delete_dog(id: usize) -> Result<(), ServerFnError> {
     });
 
     Ok(())
+}
+#[server]
+pub async fn list_cards() -> Result<Vec<(usize, String)>, ServerFnError> {
+    let cards = DB.with(|f| {
+        f.prepare("SELECT id, card_name FROM cards")
+            .unwrap()
+            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+            .unwrap()
+            .map(|r| r.unwrap())
+            .collect()
+    });
+    Ok(cards)
+}
+
+#[server]
+pub async fn save_card(name: String) -> Result<(), ServerFnError> {
+    DB.with(|db| {
+        if let Err(err) = db.execute("INSERT INTO cards (card_name) VALUES (?1)", &[&name]) {
+            tracing::error!("Failed to save card: {}", err);
+            return Err(ServerFnError::new(format!("Database error: {}", err)));
+        }
+        tracing::info!("Successfully saved card with name: {:?}", name);
+        Ok(())
+    })
 }

@@ -19,8 +19,8 @@ pub fn Navbar() -> Element {
                 "Blog"
             }
             Link {
-                to: Route::CreditCard {},
-                "Credit Card"
+                to: Route::CreateCardView {},
+                "Create Card"
             }
         }
 
