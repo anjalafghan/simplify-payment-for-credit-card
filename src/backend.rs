@@ -105,3 +105,21 @@ pub async fn save_card(name: String) -> Result<(), ServerFnError> {
         Ok(())
     })
 }
+
+#[server]
+pub async fn save_transaction(card_id: usize, transaction: f32) -> Result<(), ServerFnError> {
+    DB.with(|db| {
+        if let Err(err) = db.execute(
+            "INSERT INTO transactions (card_id) VALUES (?1)",
+            &[&transaction],
+        ) {
+            tracing::error!("Failed to save transaction: {}", err);
+            return Err(ServerFnError::new(format!("Database error: {}", err)));
+        }
+        tracing::info!(
+            "Successfully saved transaction to card with id: {:?}",
+            card_id
+        );
+        Ok(())
+    })
+}
