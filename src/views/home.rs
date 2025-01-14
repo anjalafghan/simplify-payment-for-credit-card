@@ -7,8 +7,6 @@ pub fn Home() -> Element {
     let list_cards = use_server_future(move || list_cards())?;
     let my_vec = list_cards.unwrap().unwrap();
 
-    // let mut cards = use_signal(my_vec);
-
     rsx! {
         for (id, name) in my_vec {
             CreditCard {id: id, name: name}

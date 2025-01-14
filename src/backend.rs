@@ -26,7 +26,7 @@ thread_local! {
             CREATE TABLE IF NOT EXISTS transactions(
                 id INTEGER PRIMARY KEY,
                 card_id INTEGER NOT NULL,
-                amount FLOAT NOT NULL,
+                amount REAL NOT NULL,
                 FOREIGN KEY (card_id) REFERENCES cards(id)
             );
             "#,
@@ -107,11 +107,13 @@ pub async fn save_card(name: String) -> Result<(), ServerFnError> {
 }
 
 #[server]
-pub async fn save_transaction(card_id: usize, transaction: f32) -> Result<(), ServerFnError> {
+pub async fn save_transaction(card_id: usize, transaction: f64) -> Result<(), ServerFnError> {
     DB.with(|db| {
+        let card_id = card_id as i64;
+        let transactions = transaction as f64;
         if let Err(err) = db.execute(
-            "INSERT INTO transactions (card_id) VALUES (?1)",
-            &[&transaction],
+            "INSERT INTO transactions (card_id, amount) VALUES (?1, ?2)",
+            rusqlite::params![&card_id, &transactions],
         ) {
             tracing::error!("Failed to save transaction: {}", err);
             return Err(ServerFnError::new(format!("Database error: {}", err)));
@@ -122,4 +124,16 @@ pub async fn save_transaction(card_id: usize, transaction: f32) -> Result<(), Se
         );
         Ok(())
     })
+}
+
+#[server]
+pub async fn get_transactions(card_id: usize) -> Result<f64, ServerFnError> {
+    let amount: f32 = DB.with(|f| {
+        f.prepare("SELECT SUM(amount) FROM transactions WHERE card_id = ?1")
+            .and_then(|mut stmt| {
+                stmt.query_row([card_id], |row| row.get(0)) // Get the single result (SUM(amount))
+            })
+            .unwrap_or(0.0) // Default to 0.0 if there's an error or no result
+    });
+    Ok(amount)
 }
