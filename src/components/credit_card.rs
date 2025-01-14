@@ -9,34 +9,40 @@ pub fn CreditCard(id: usize, name: String) -> Element {
     div {
         id: "credit-card",
         h1 { "Credit Card {name}" },
-        button {
-                onclick: move |_| async move  {
-                    match get_transactions(id).await{
-                    Ok(amount) =>{
-                        data.set(amount);
-                    }
-                    Err(e) => {
-                        tracing::info!("Not able to fetch the details {}", e);
-                    }
-                }
-                } ,
-        "Click to view Data"
-        },
-        p{ "{data}"}
 
+        p{
+        "{data}"
+        }
         div{
             form { onsubmit: move |event| async move {
                 if let Some(amount) = event.values().get("current_card_amount").and_then(|value| value.get(0)).and_then(|s| s.parse::<f64>().ok()) {
-                    data.set(amount);
-                    tracing::info!("Amount captured {:?}", amount);
-                    match save_transaction(id, amount).await{
-                        Ok(_) => {
-                            tracing::info!("Transaction saved successfully");
+                    match get_transactions(id).await{
+                        Ok(sum_amount) => {
+                            let money_to_pay = amount - sum_amount;
+                            data.set(money_to_pay);
+                            match save_transaction(id, money_to_pay).await{
+                                Ok(_) => {
+                                    tracing::info!("Transaction saved successfully");
+                                }
+                                Err(e) => {
+                                    tracing::error!("Error saving transaction: {:?}", e);
+                                }
+                            }
+                        },
+                        Err(_)=>{
+                            tracing::info!("handle later");
                         }
-                        Err(e) => {
-                            tracing::error!("Error saving transaction: {:?}", e);
-                        }
+
                     }
+                    tracing::info!("Amount captured {:?}", amount);
+                //     match save_transaction(id, amount).await{
+                //         Ok(_) => {
+                //             tracing::info!("Transaction saved successfully");
+                //         }
+                //         Err(e) => {
+                //             tracing::error!("Error saving transaction: {:?}", e);
+                //         }
+                //     }
                 }
             },
                         input { name: "current_card_amount" }

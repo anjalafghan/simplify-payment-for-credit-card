@@ -128,7 +128,7 @@ pub async fn save_transaction(card_id: usize, transaction: f64) -> Result<(), Se
 
 #[server]
 pub async fn get_transactions(card_id: usize) -> Result<f64, ServerFnError> {
-    let amount: f32 = DB.with(|f| {
+    let amount: f64 = DB.with(|f| {
         f.prepare("SELECT SUM(amount) FROM transactions WHERE card_id = ?1")
             .and_then(|mut stmt| {
                 stmt.query_row([card_id], |row| row.get(0)) // Get the single result (SUM(amount))
