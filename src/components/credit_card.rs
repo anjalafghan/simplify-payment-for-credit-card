@@ -13,12 +13,13 @@ pub fn CreditCard(id: usize, name: String) -> Element {
         p{
         "{data}"
         }
+
         div{
             form { onsubmit: move |event| async move {
-                if let Some(amount) = event.values().get("current_card_amount").and_then(|value| value.get(0)).and_then(|s| s.parse::<f64>().ok()) {
+                if let Some(amount_showing_up_on_card) = event.values().get("current_card_amount").and_then(|value| value.get(0)).and_then(|s| s.parse::<f64>().ok()) {
                     match get_transactions(id).await{
-                        Ok(sum_amount) => {
-                            let money_to_pay = amount - sum_amount;
+                        Ok(sum_amount_from_database) => {
+                            let money_to_pay = amount_showing_up_on_card - sum_amount_from_database;
                             data.set(money_to_pay);
                             match save_transaction(id, money_to_pay).await{
                                 Ok(_) => {
@@ -34,7 +35,6 @@ pub fn CreditCard(id: usize, name: String) -> Element {
                         }
 
                     }
-                    tracing::info!("Amount captured {:?}", amount);
                 //     match save_transaction(id, amount).await{
                 //         Ok(_) => {
                 //             tracing::info!("Transaction saved successfully");
