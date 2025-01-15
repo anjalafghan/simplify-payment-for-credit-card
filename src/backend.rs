@@ -13,7 +13,10 @@ thread_local! {
             r#"
             CREATE TABLE IF NOT EXISTS cards (
                 id INTEGER PRIMARY KEY,
-                card_name TEXT NOT NULL
+                card_name TEXT NOT NULL,
+                color TEXT,
+                secondary_color TEXT,
+                card_type TEXT
             );
             "#,
         ).unwrap_or_else(|err| {
@@ -82,11 +85,19 @@ pub async fn delete_dog(id: usize) -> Result<(), ServerFnError> {
     Ok(())
 }
 #[server]
-pub async fn list_cards() -> Result<Vec<(usize, String)>, ServerFnError> {
+pub async fn list_cards() -> Result<Vec<(usize, String, String, String, String)>, ServerFnError> {
     let cards = DB.with(|f| {
-        f.prepare("SELECT id, card_name FROM cards")
+        f.prepare("SELECT id, card_name, color, secondary_color, card_type FROM cards")
             .unwrap()
-            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+            .query_map([], |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                ))
+            })
             .unwrap()
             .map(|r| r.unwrap())
             .collect()
@@ -95,9 +106,17 @@ pub async fn list_cards() -> Result<Vec<(usize, String)>, ServerFnError> {
 }
 
 #[server]
-pub async fn save_card(name: String) -> Result<(), ServerFnError> {
+pub async fn save_card(
+    name: String,
+    color: String,
+    secondary_color: String,
+    card_type: String,
+) -> Result<(), ServerFnError> {
     DB.with(|db| {
-        if let Err(err) = db.execute("INSERT INTO cards (card_name) VALUES (?1)", &[&name]) {
+        if let Err(err) = db.execute(
+            "INSERT INTO cards (card_name, color, secondary_color, card_type) VALUES (?1, ?2, ?3, ?4)",
+            &[&name, &color, &secondary_color, &card_type],
+        ) {
             tracing::error!("Failed to save card: {}", err);
             return Err(ServerFnError::new(format!("Database error: {}", err)));
         }

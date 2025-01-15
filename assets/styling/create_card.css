@@ -1,0 +1,108 @@
+/* Global Styles */
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #black;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Style for the create-card container */
+#create-card {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#create-card h1 {
+    text-align: center;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Style for the form inside #create-card */
+#create-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Style for the form labels inside #create-card */
+#create-card form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Style for the input fields inside #create-card */
+#create-card form input[type="text"],
+#create-card form input[type="color"],
+#create-card form select {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+/* Focus effect */
+#create-card form input[type="text"]:focus,
+#create-card form input[type="color"]:focus,
+#create-card form select:focus {
+    border-color: #77a047;
+    outline: none;
+}
+
+/* Style for the submit button inside #create-card */
+#create-card form input[type="submit"] {
+    padding: 14px;
+    background-color: #77a047; /* Primary green color */
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease;
+}
+
+/* Hover and Active States for the submit button */
+#create-card form input[type="submit"]:hover {
+    background-color: #66a045;
+}
+
+#create-card form input[type="submit"]:active {
+    background-color: #4caf50;
+    transform: scale(0.98);
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 600px) {
+    #create-card {
+        padding: 15px;
+    }
+
+    #create-card form input[type="text"],
+    #create-card form input[type="color"],
+    #create-card form select {
+        padding: 10px;
+    }
+}

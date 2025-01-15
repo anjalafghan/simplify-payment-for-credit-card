@@ -1,7 +1,7 @@
 use components::Navbar;
 use dioxus::prelude::*;
 use tracing_subscriber;
-use views::{Blog, CreateCardView, Home};
+use views::{CreateCardView, Home};
 mod backend;
 mod components;
 mod views;
@@ -12,8 +12,6 @@ enum Route {
     #[layout(Navbar)]
     #[route("/")]
     Home {},
-    #[route("/blog/:id")]
-    Blog { id: i32 },
     #[route("/create-card")]
     CreateCardView {},
 }
@@ -21,6 +19,8 @@ enum Route {
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/styling/main.css");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+const CREDIT_CSS: Asset = asset!("/assets/styling/credit_card.css");
+const CREATE_CARD: Asset = asset!("/assets/styling/create_card.css");
 
 fn main() {
     tracing_subscriber::fmt::init();
@@ -31,12 +31,15 @@ fn main() {
 #[component]
 fn App() -> Element {
     // Build cool things ✌️
-
     rsx! {
+
         // Global app resources
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
         document::Link { rel: "stylesheet", href: TAILWIND_CSS }
+        document::Link { rel: "stylesheet", href: CREDIT_CSS}
+        document::Link { rel: "stylesheet", href: CREATE_CARD}
+
 
         Router::<Route> {}
     }

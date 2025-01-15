@@ -1,8 +1,9 @@
 body {
-    background-color: #0f1116;
+    background-color: black;
     color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; /* Removed extra margin to avoid issues */
+    padding: 0;
 }
 
 #hero {
@@ -39,4 +40,33 @@ body {
 
 #header {
     max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+    background-color: #333; /* Ensure background color for the navbar */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Keep the navbar above other content */
+}
+
+.card-container {
+    display: flex;
+    flex-direction: column; /* Stack cards vertically */
+    gap: 40px; /* Add space between cards */
+    align-items: center; /* Center align the cards horizontally */
+    margin-top: 100px; /* Add top margin to push the cards below the navbar */
+    padding: 20px; /* Add padding around the cards */
+}
+
+.loading {
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
 }

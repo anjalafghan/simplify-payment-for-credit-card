@@ -1,4 +1,67 @@
-#credit-card {
-    border: 1px;
-    border-color: white;
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+    font-family: Arial, sans-serif;
+}
+
+.credit-card {
+    width: 320px;
+    height: 250px; /* Increased height to fit the form properly */
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.4s ease;
+}
+
+.credit-card:hover {
+    transform: perspective(1000px) rotateX(-5deg) rotateY(5deg);
+}
+
+.credit-card:active {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale(0.98);
+}
+
+.card-chip {
+    width: 50px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: #d4af37;
+}
+
+.card-number {
+    font-size: 1.4em;
+    letter-spacing: 2px;
+}
+
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-holder {
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.card-amount {
+    font-size: 0.9em;
+}
+
+.expiry-date {
+    font-size: 0.9em;
+}
+
+.card-logo {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: right;
 }
