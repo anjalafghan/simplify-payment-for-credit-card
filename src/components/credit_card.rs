@@ -22,7 +22,7 @@ pub fn CreditCard(
 
             div {
                 class: "card-details",
-                div { class: "card-holder", "John Doe" }
+                div { class: "card-holder", "{name}" }
 
                 div { class: "expiry-date", "12/25" }
             }
@@ -52,10 +52,11 @@ pub fn CreditCard(
                 },
                 input {
                                     name: "current_card_amount",
+                                    id: "credit_card_input",
                                     r#type: "text",
                                     placeholder: "Enter Amount",
                                 }
-                                input { r#type: "submit", value: "Pay" }
+                                input { r#type: "submit", id: "submit_button",  value: "Pay" }
             }
         }
     }

@@ -1,6 +1,5 @@
-use crate::{backend::list_cards, components::CreditCard, App};
+use crate::{backend::list_cards, components::CreditCard};
 use dioxus::prelude::*;
-use tracing::info;
 
 #[component]
 pub fn Home() -> Element {
@@ -18,9 +17,3 @@ pub fn Home() -> Element {
         }
     }
 }
-
-// We need to fetch all credit cards reactively
-// How? we just hit the backend and get the data and if there is a data we render that
-// Get the list of data from backend
-// initialize a signal vector
-// and then use signal to update the data
