@@ -1,4 +1,11 @@
 use dioxus::prelude::*;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct DelCards {
+    pub id: usize,
+    pub name: String,
+}
 
 #[cfg(feature = "server")]
 thread_local! {
@@ -16,6 +23,7 @@ thread_local! {
                 card_name TEXT NOT NULL,
                 color TEXT,
                 secondary_color TEXT,
+                button_color TEXT,
                 card_type TEXT
             );
             "#,
@@ -85,23 +93,45 @@ pub async fn delete_dog(id: usize) -> Result<(), ServerFnError> {
     Ok(())
 }
 #[server]
-pub async fn list_cards() -> Result<Vec<(usize, String, String, String, String)>, ServerFnError> {
+pub async fn list_cards(
+) -> Result<Vec<(usize, String, String, String, String, String)>, ServerFnError> {
     let cards = DB.with(|f| {
-        f.prepare("SELECT id, card_name, color, secondary_color, card_type FROM cards")
-            .unwrap()
-            .query_map([], |row| {
-                Ok((
-                    row.get(0)?,
-                    row.get(1)?,
-                    row.get(2)?,
-                    row.get(3)?,
-                    row.get(4)?,
-                ))
-            })
-            .unwrap()
-            .map(|r| r.unwrap())
-            .collect()
+        f.prepare(
+            "SELECT id, card_name, color, secondary_color, button_color, card_type FROM cards",
+        )
+        .unwrap()
+        .query_map([], |row| {
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                row.get(4)?,
+                row.get(5)?,
+            ))
+        })
+        .unwrap()
+        .map(|r| r.unwrap())
+        .collect()
     });
+    Ok(cards)
+}
+
+#[server]
+pub async fn list_cards_for_deletion() -> Result<Vec<DelCards>, ServerFnError> {
+    let cards = DB.with(|f| {
+        let mut stmt = f.prepare("SELECT id, card_name FROM cards")?;
+        let rows = stmt.query_map([], |row| {
+            Ok(DelCards {
+                id: row.get(0)?,
+                name: row.get(1)?,
+            })
+        })?;
+
+        let cards: Result<Vec<_>, _> = rows.collect();
+        cards
+    })?;
+
     Ok(cards)
 }
 
@@ -110,12 +140,13 @@ pub async fn save_card(
     name: String,
     color: String,
     secondary_color: String,
+    button_color: String,
     card_type: String,
 ) -> Result<(), ServerFnError> {
     DB.with(|db| {
         if let Err(err) = db.execute(
-            "INSERT INTO cards (card_name, color, secondary_color, card_type) VALUES (?1, ?2, ?3, ?4)",
-            &[&name, &color, &secondary_color, &card_type],
+            "INSERT INTO cards (card_name, color, secondary_color, button_color,  card_type) VALUES (?1, ?2, ?3, ?4, ?5)",
+            &[&name, &color, &secondary_color, &button_color,  &card_type],
         ) {
             tracing::error!("Failed to save card: {}", err);
             return Err(ServerFnError::new(format!("Database error: {}", err)));
@@ -155,4 +186,18 @@ pub async fn get_transactions(card_id: usize) -> Result<f64, ServerFnError> {
             .unwrap_or(0.0) // Default to 0.0 if there's an error or no result
     });
     Ok(amount)
+}
+
+#[server]
+pub async fn delete_card(id: usize) -> Result<(), ServerFnError> {
+    DB.with(|db| {
+        if let Err(err) = db.execute("DELETE FROM cards WHERE id = ?1", &[&id]) {
+            eprint!("Failed to delete card: {}", err);
+            return Err(ServerFnError::new(err.to_string()));
+        }
+
+        Ok(())
+    });
+
+    Ok(())
 }

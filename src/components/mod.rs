@@ -9,3 +9,6 @@ pub use create_card::CreateCard;
 
 mod color_generator;
 pub use color_generator::color_generator;
+
+mod delete_card;
+pub use delete_card::DeleteCard;

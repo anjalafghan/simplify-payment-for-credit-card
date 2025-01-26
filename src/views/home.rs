@@ -11,7 +11,7 @@ pub fn Home() -> Element {
         div {
             class: "card-container",
         for card in cards {
-            CreditCard {id: card.0, name: card.1, color: card.2, secondary_color: card.3,  card_type: card.4}
+            CreditCard {id: card.0, name: card.1, color: card.2, secondary_color: card.3, button_color: card.4,  card_type: card.5}
             }
         }
         }

@@ -1,7 +1,7 @@
 use components::Navbar;
 use dioxus::prelude::*;
 use tracing_subscriber;
-use views::{CreateCardView, Home};
+use views::{CreateCardView, DeleteCardView, Home};
 mod backend;
 mod components;
 mod views;
@@ -14,6 +14,8 @@ enum Route {
     Home {},
     #[route("/create-card")]
     CreateCardView {},
+    #[route("/delete-card")]
+    DeleteCardView {},
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");

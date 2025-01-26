@@ -1,12 +1,14 @@
 use crate::backend::get_transactions;
 use crate::backend::save_transaction;
 use dioxus::prelude::*;
+
 #[component]
 pub fn CreditCard(
     id: usize,
     name: String,
     color: String,
     secondary_color: String,
+    button_color: String,
     card_type: String,
 ) -> Element {
     let mut data = use_signal(|| String::new());
@@ -56,7 +58,12 @@ pub fn CreditCard(
                                     r#type: "text",
                                     placeholder: "Enter Amount",
                                 }
-                                input { r#type: "submit", id: "submit_button",  value: "Pay" }
+                                input {
+                                                    r#type: "submit",
+                                                    id: "pay_button",
+                                                    style: format!("color: {};", button_color),
+                                                    value: "Pay",
+                                                }
             }
         }
     }

@@ -22,9 +22,9 @@ pub fn CreateCard() -> Element {
                         event.values().get("card_type").and_then(|v| v.get(0))
                     ) {
                         tracing::info!("Received values - Name: {:?}, Color: {:?}, Type: {:?}", name, color, card_type);
-                        let secondary_color = color_generator(color);
+                        let (secondary_color, button_color) = color_generator(color);
 
-                        match save_card(name.to_string(), color.to_string(), secondary_color.to_string(),  card_type.to_string()).await {
+                        match save_card(name.to_string(), color.to_string(), secondary_color.to_string(), button_color.to_string(),  card_type.to_string()).await {
                             Ok(_) => {
                                 tracing::info!("Card saved successfully");
                             }

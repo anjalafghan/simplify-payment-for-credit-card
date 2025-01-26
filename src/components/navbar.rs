@@ -18,6 +18,10 @@ pub fn Navbar() -> Element {
                 to: Route::CreateCardView {},
                 "Create Card"
             }
+            Link {
+                to: Route::DeleteCardView {},
+                "Delete Card"
+            }
         }
 
         Outlet::<Route> {}
