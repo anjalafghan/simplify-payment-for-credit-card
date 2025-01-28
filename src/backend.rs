@@ -7,6 +7,12 @@ pub struct DelCards {
     pub name: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Transaction {
+    pub amount: f64,
+    pub timestamp: String,
+}
+
 #[cfg(feature = "server")]
 thread_local! {
     pub static DB: rusqlite::Connection = {
@@ -38,6 +44,7 @@ thread_local! {
                 id INTEGER PRIMARY KEY,
                 card_id INTEGER NOT NULL,
                 amount REAL NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (card_id) REFERENCES cards(id)
             );
             "#,
@@ -186,6 +193,24 @@ pub async fn get_transactions(card_id: usize) -> Result<f64, ServerFnError> {
             .unwrap_or(0.0) // Default to 0.0 if there's an error or no result
     });
     Ok(amount)
+}
+
+#[server]
+pub async fn get_all_transactions(card_id: usize) -> Result<Vec<Transaction>, ServerFnError> {
+    let transactions: Vec<Transaction> = DB.with(|f| {
+        f.prepare("SELECT amount, timestamp FROM transactions WHERE card_id = ?1")
+            .and_then(|mut stmt| {
+                let rows = stmt.query_map([card_id], |row| {
+                    Ok(Transaction {
+                        amount: row.get(0)?,
+                        timestamp: row.get(1)?,
+                    })
+                })?;
+                let transactions: Result<Vec<_>, _> = rows.collect();
+                transactions
+            })
+    })?;
+    Ok(transactions)
 }
 
 #[server]

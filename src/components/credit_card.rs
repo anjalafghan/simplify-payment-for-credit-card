@@ -1,3 +1,4 @@
+use crate::backend::get_all_transactions;
 use crate::backend::get_transactions;
 use crate::backend::save_transaction;
 use dioxus::prelude::*;
@@ -12,9 +13,14 @@ pub fn CreditCard(
     card_type: String,
 ) -> Element {
     let mut data = use_signal(|| String::new());
+    let show_table = use_signal(|| false);
 
     rsx! {
         div {
+            onclick: move |_| async move {
+                tracing::info!("Card clicked");
+
+            },
             class: "credit-card",
             style: format!("background: linear-gradient(135deg, {}, {});", color, secondary_color),
 

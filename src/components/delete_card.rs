@@ -16,48 +16,56 @@ pub fn DeleteCard() -> Element {
           class: "card-title",
           "Credit Card Deletion"
         }
-        form {
-          class: "card-form",
-          onsubmit: move |event| async move {
-            // Extract values from the form
-            if let (Some(id), ) = (
-                event.values().get("id").and_then(|v| v.get(0)).and_then(|id| Some(id.parse::<usize>())),
-            ) {
-              tracing::info!("Received values - id: {:?}", id);
+        div {
+            form {
+              class: "card-form",
+              onsubmit: move |event| async move {
+                // Extract values from the form
+                if let (Some(id), ) = (
+                    event.values().get("id").and_then(|v| v.get(0)).and_then(|id| Some(id.parse::<usize>())),
+                ) {
+                  tracing::info!("Received values - id: {:?}", id);
 
-              match delete_card(id.expect("Conversion failed")).await {
-                Ok(_) => {
-                  tracing::info!("Card deleted successfully");
+                  match delete_card(id.expect("Conversion failed")).await {
+                    Ok(_) => {
+                      tracing::info!("Card deleted successfully");
+                      web_sys::window()
+                                              .unwrap()
+                                              .alert_with_message("Card deleted")
+                                              .unwrap();
+                    }
+                    Err(e) => {
+                      tracing::error!("Error saving card: {:?}", e);
+                    }
+                  }
                 }
-                Err(e) => {
-                  tracing::error!("Error saving card: {:?}", e);
+              },
+              div {
+                class: "input-group",
+                label {
+                  class: "input-label",
+                  "Select Card"
+                }
+                select {
+                  name: "id",
+                  class: "input-field",
+                  required: true,
+                  for i in cards {
+                    option {
+                      value: "{i.id}",
+                      "{i.name}"
+                    }
+                  }
                 }
               }
-            }
-          },
-          div {
-            class: "input-group",
-            label {
-              class: "input-label",
-              "Select Card"
-            }
-            select {
-              name: "id",
-              class: "input-field",
-              required: true,
-              for i in cards {
-                option {
-                  value: "{i.id}",
-                  "name: {i.name}"
-                }
+              span {  }
+              span {  }
+              input {
+                r#type: "submit",
+                class: "submit-btn",
+                value: "Delete Card Button"
               }
             }
-          }
-          input {
-            r#type: "submit",
-            class: "submit-btn",
-            value: "Delete Card Button"
-          }
         }
       }
     }

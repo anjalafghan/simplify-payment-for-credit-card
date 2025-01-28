@@ -27,6 +27,11 @@ pub fn CreateCard() -> Element {
                         match save_card(name.to_string(), color.to_string(), secondary_color.to_string(), button_color.to_string(),  card_type.to_string()).await {
                             Ok(_) => {
                                 tracing::info!("Card saved successfully");
+                                web_sys::window()
+                                                        .unwrap()
+                                                        .alert_with_message("Card created")
+                                                        .unwrap();
+
                             }
                             Err(e) => {
                                 tracing::error!("Error saving card: {:?}", e);

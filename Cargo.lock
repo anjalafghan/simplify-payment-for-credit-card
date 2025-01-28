@@ -450,6 +450,7 @@ dependencies = [
  "serde_json",
  "tracing",
  "tracing-subscriber 0.2.25",
+ "web-sys",
 ]
 
 [[package]]
