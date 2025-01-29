@@ -26,7 +26,7 @@ const CREATE_CARD: Asset = asset!("/assets/styling/create_card.css");
 
 fn main() {
     tracing_subscriber::fmt::init();
-
+    tracing::info!("info");
     dioxus::launch(App);
 }
 
