@@ -34,6 +34,8 @@ fn main() {
 fn App() -> Element {
     // Build cool things ✌️
     rsx! {
+        div {
+            class: "main-container",
 
         // Global app resources
         document::Link { rel: "icon", href: FAVICON }
@@ -44,5 +46,6 @@ fn App() -> Element {
 
 
         Router::<Route> {}
+        }
     }
 }

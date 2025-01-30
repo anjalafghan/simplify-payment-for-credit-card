@@ -4,7 +4,7 @@ use crate::backend::{delete_card, list_cards_for_deletion};
 
 #[component]
 pub fn DeleteCard() -> Element {
-    let list_cards = use_server_future(move || list_cards_for_deletion())?;
+    let mut list_cards = use_server_future(move || list_cards_for_deletion())?;
     let cards = list_cards.unwrap().unwrap();
 
     rsx! {
@@ -33,6 +33,8 @@ pub fn DeleteCard() -> Element {
                                               .unwrap()
                                               .alert_with_message("Card deleted")
                                               .unwrap();
+                      list_cards.restart();
+
                     }
                     Err(e) => {
                       tracing::error!("Error saving card: {:?}", e);
