@@ -1,6 +1,5 @@
 use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DelCards {
     pub id: usize,
@@ -54,51 +53,9 @@ thread_local! {
         });
         conn
     };
+
 }
 
-// Expose a `save_dog` endpoint on our server that takes an "image" parameter
-#[server]
-pub async fn save_dog(image: String) -> Result<(), ServerFnError> {
-    DB.with(|db| {
-        if let Err(err) = db.execute("INSERT INTO dogs (url) VALUES (?1)", &[&image]) {
-            eprint!("Failed to save dog: {}", err);
-            return Err(ServerFnError::new(err.to_string()));
-        }
-
-        Ok(())
-    });
-
-    Ok(())
-}
-
-// Query the database and return the last 10 dogs and their url
-#[server]
-pub async fn list_dogs() -> Result<Vec<(usize, String)>, ServerFnError> {
-    let dogs = DB.with(|f| {
-        f.prepare("SELECT id, url FROM dogs ORDER BY id DESC LIMIT 10")
-            .unwrap()
-            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
-            .unwrap()
-            .map(|r| r.unwrap())
-            .collect()
-    });
-
-    Ok(dogs)
-}
-
-#[server]
-pub async fn delete_dog(id: usize) -> Result<(), ServerFnError> {
-    DB.with(|db| {
-        if let Err(err) = db.execute("DELETE FROM dogs WHERE id = ?1", &[&id]) {
-            eprint!("Failed to delete dog: {}", err);
-            return Err(ServerFnError::new(err.to_string()));
-        }
-
-        Ok(())
-    });
-
-    Ok(())
-}
 #[server]
 pub async fn list_cards(
 ) -> Result<Vec<(usize, String, String, String, String, String)>, ServerFnError> {
