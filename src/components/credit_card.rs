@@ -91,6 +91,7 @@ pub fn CreditCard(
                             li {
                                 "Amount: ₹{transaction.amount}, Date: {transaction.timestamp}"
                             }
+                            button { "Delete" }
                         }
                     }
                     button {

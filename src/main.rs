@@ -25,8 +25,11 @@ const CREDIT_CSS: Asset = asset!("/assets/styling/credit_card.css");
 const CREATE_CARD: Asset = asset!("/assets/styling/create_card.css");
 
 fn main() {
-    tracing_subscriber::fmt::init();
+    tracing::trace!("trace");
+    tracing::debug!("debug");
     tracing::info!("info");
+    tracing::warn!("warn");
+    tracing::error!("error");
     dioxus::launch(App);
 }
 

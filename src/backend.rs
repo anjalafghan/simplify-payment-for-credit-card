@@ -59,26 +59,29 @@ thread_local! {
 #[server]
 pub async fn list_cards(
 ) -> Result<Vec<(usize, String, String, String, String, String)>, ServerFnError> {
-    let cards = DB.with(|f| {
-        f.prepare(
-            "SELECT id, card_name, color, secondary_color, button_color, card_type FROM cards",
-        )
-        .unwrap()
-        .query_map([], |row| {
-            Ok((
-                row.get(0)?,
-                row.get(1)?,
-                row.get(2)?,
-                row.get(3)?,
-                row.get(4)?,
-                row.get(5)?,
-            ))
-        })
-        .unwrap()
-        .map(|r| r.unwrap())
-        .collect()
-    });
-    Ok(cards)
+    DB.with(|f| {
+        let mut stmt = f
+            .prepare(
+                "SELECT id, card_name, color, secondary_color, button_color, card_type FROM cards",
+            )
+            .map_err(|e| ServerFnError::new(format!("Failed to prepare query: {}", e)))?;
+
+        let rows = stmt
+            .query_map([], |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                    row.get(5)?,
+                ))
+            })
+            .map_err(|e| ServerFnError::new(format!("Failed to map query results: {}", e)))?;
+
+        rows.collect::<Result<Vec<_>, _>>()
+            .map_err(|e| ServerFnError::new(format!("Failed to collect query results: {}", e)))
+    })
 }
 
 #[server]
